@@ -1,33 +1,66 @@
 version: 2
 jobs:
-  android:
-    working_directory: ~/DevOpsTesting
+  install_node_modules:
+    working_directory: ~/RNDevOpsTesting
     docker:
       - image: circleci/android:api-28-node8-alpha
     steps:
       - checkout:
-          path: ~/DevOpsTesting
+          path: ~/RNDevOpsTesting
+      
+      - attach_workspace:
+          at: ~/RNDevOpsTesting
+
+      - restore_cache:
+          key:  node-v1-{{ checksum "package.json" }}-{{ checksum "yarn.lock" }}
+        
+      - run: yarn  --frozen-lockfile
+
+      - save_cache:
+          paths:
+            - node_modules
+            - ~/.yarn
+            - ~/.cache/yarn
+          key: node-v1-{{ checksum "package.json" }}-{{ checksum "yarn.lock" }}
+
+  jest_test:
+    working_directory: ~/RNDevOpsTesting
+    docker:
+      - image: circleci/android:api-28-node8-alpha
+    steps:
+      - checkout:
+          path: ~/RNDevOpsTesting
+      
+      - attach_workspace:
+          at: ~/RNDevOpsTesting
+
+      - restore_cache:
+          key:  node-v1-{{ checksum "package.json" }}-{{ checksum "yarn.lock" }}
+        
+      - run: yarn test
+    
+  build_android:
+    working_directory: ~/RNDevOpsTesting
+    docker:
+      - image: circleci/android:api-28-node8-alpha
+    steps:
+      - checkout:
+          path: ~/RNDevOpsTesting
 
       - attach_workspace:
-          at: ~/DevOpsTesting
+          at: ~/RNDevOpsTesting
 
       - restore_cache:
-          key: yarn-v1-{{ .Branch }}-{{ arch }}-
-
-      - restore_cache:
-          key: node-v1-{{ .Branch }}-{{ arch }}-
-
-      - restore_cache:
-          key: licenses-v1-{{ .Branch }}-{{ arch }}-
+          key:  node-v1-{{ checksum "package.json" }}-{{ checksum "yarn.lock" }}
 
       - run: yarn install
 
       - run:
           name: build android apk
           command: |
-            cd ~/DevOpsTesting/android
-            if [ "${CIRCLE_BRANCH}" == "master" ]; then
-              ./gradlew assembleRelease
+            cd ~/RNDevOpsTesting/android
+            if [ "${CIRCLE_BRANCH}" == "development" ]; then
+              ./gradlew assembleDebug
             # elif [ "${CIRCLE_BRANCH}" == "staging" ]; then
             #   ./gradlew assembleStaging
             # elif [[ "${CIRCLE_BRANCH}" == *"AR-"* ]]; then
@@ -37,15 +70,12 @@ jobs:
             fi
 workflows:
   version: 2
-  android:
+  build_and_test:
     jobs:
-      # - jest-test
-      - android:
-          # requires:
-          #   - jest-test
-          filters:
-            branches:
-              only:
-              - master
-              # - staging
-              # - /AR-.*/
+      - install_node_modules
+      - jest_test
+      - build_android:
+          requires:
+            - node_modules
+            - jest_test
+    
