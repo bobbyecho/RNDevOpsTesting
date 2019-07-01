@@ -1,0 +1,51 @@
+version: 2
+jobs:
+  android:
+    working_directory: ~/DevOpsTesting
+    docker:
+      - image: circleci/android:api-28-node8-alpha
+    steps:
+      - checkout:
+          path: ~/DevOpsTesting
+
+      - attach_workspace:
+          at: ~/DevOpsTesting
+
+      - restore_cache:
+          key: yarn-v1-{{ .Branch }}-{{ arch }}-
+
+      - restore_cache:
+          key: node-v1-{{ .Branch }}-{{ arch }}-
+
+      - restore_cache:
+          key: licenses-v1-{{ .Branch }}-{{ arch }}-
+
+      - run: yarn install
+
+      - run:
+          name: build android apk
+          command: |
+            cd ~/DevOpsTesting/android
+            if [ "${CIRCLE_BRANCH}" == "master" ]; then
+              ./gradlew assembleRelease
+            # elif [ "${CIRCLE_BRANCH}" == "staging" ]; then
+            #   ./gradlew assembleStaging
+            # elif [[ "${CIRCLE_BRANCH}" == *"AR-"* ]]; then
+            #   ./gradlew assembleStaging
+            # elif [[ "${CIRCLE_BRANCH}" == *"release_"* ]]; then
+            #   ./gradlew assembleRelease
+            fi
+workflows:
+  version: 2
+  android:
+    jobs:
+      # - jest-test
+      - android:
+          # requires:
+          #   - jest-test
+          filters:
+            branches:
+              only:
+              - master
+              # - staging
+              # - /AR-.*/
