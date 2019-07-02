@@ -49,7 +49,7 @@ jobs:
           at: ~/RNDevOpsTesting
 
       - restore_cache:
-          key:  node-v1-{{ checksum "package.json" }}-{{ checksum "yarn.lock" }}
+          key: node-v1-{{ checksum "package.json" }}-{{ checksum "yarn.lock" }}
 
       - run:
           name: build android apk
@@ -66,7 +66,7 @@ jobs:
             fi
 
       - store_artifacts:
-          path: ~/RNDevOpsTesting/android/app/build/outputs/apk
+          path: ~/RNDevOpsTesting/android/app/build/outputs/apk/
 
 workflows:
   version: 2
