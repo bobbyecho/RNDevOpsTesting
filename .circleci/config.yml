@@ -73,7 +73,7 @@ workflows:
   build-and-test:
     jobs:
       - install-node-modules
-      - jest-test
+      - jest-test:
           requires:
             - install-node-modules
       - build-android:
