@@ -54,14 +54,11 @@ jobs:
       - run:
           name: build android apk
           command: |
-            if [ "${CIRCLE_BRANCH}" == "development" ]; then
-              react-native run-android
-            # elif [ "${CIRCLE_BRANCH}" == "staging" ]; then
-            #   ./gradlew assembleStaging
-            # elif [[ "${CIRCLE_BRANCH}" == *"AR-"* ]]; then
-            #   ./gradlew assembleStaging
-            # elif [[ "${CIRCLE_BRANCH}" == *"release_"* ]]; then
-            #   ./gradlew assembleRelease
+            cd ~/RNDevOpsTesting/android
+            if [ "${CIRCLE_BRANCH}" == "staging" ]; then
+               ./gradlew assembleStaging
+            elif [ "${CIRCLE_BRANCH}" == "release" ]; then
+               ./gradlew assembleRelease
             fi
 
       - store_artifacts:

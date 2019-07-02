@@ -4,25 +4,5 @@
     
     
     
-      
-      <testcase classname="fastlane.lanes" name="0: cp /Users/Bob/code/ReactNative/DevOpsTesting/env/env.dev /Users/Bob/code/ReactNative/DevOpsTesting/.env" time="0.024892">
-        
-      </testcase>
-    
-      
-      <testcase classname="fastlane.lanes" name="1: gradle" time="1.618944">
-        
-      </testcase>
-    
-      
-      <testcase classname="fastlane.lanes" name="2: gradle" time="95.521065">
-        
-      </testcase>
-    
-      
-      <testcase classname="fastlane.lanes" name="3: adb" time="19.86918">
-        
-      </testcase>
-    
   </testsuite>
 </testsuites>

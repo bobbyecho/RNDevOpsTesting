@@ -30,6 +30,8 @@ build/
 local.properties
 *.iml
 
+fastlane/
+
 # node.js
 #
 node_modules/
