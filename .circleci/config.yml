@@ -54,9 +54,8 @@ jobs:
       - run:
           name: build android apk
           command: |
-            cd ~/RNDevOpsTesting/android
             if [ "${CIRCLE_BRANCH}" == "development" ]; then
-              ./gradlew installDebug
+              react-native run-android
             # elif [ "${CIRCLE_BRANCH}" == "staging" ]; then
             #   ./gradlew assembleStaging
             # elif [[ "${CIRCLE_BRANCH}" == *"AR-"* ]]; then
