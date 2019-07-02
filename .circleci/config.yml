@@ -5,68 +5,52 @@ jobs:
     docker:
       - image: ralalibeta/android_ci:latest
     steps:
-      - checkout:
-          path: ~/RNDevOpsTesting
-      
-      - attach_workspace:
-          at: ~/RNDevOpsTesting
-
+      - checkout
       - restore_cache:
           key: node-v1-{{ checksum "package.json" }}-{{ checksum "yarn.lock" }}
-        
       - run: yarn  --frozen-lockfile
-
       - save_cache:
           paths:
             - node_modules
             - ~/.yarn
             - ~/.cache/yarn
           key: node-v1-{{ checksum "package.json" }}-{{ checksum "yarn.lock" }}
+
   jest-test:
-    working_directory: ~/RNDevOpsTesting
     docker:
       - image: ralalibeta/android_ci:latest
     steps:
-      - checkout:
-          path: ~/RNDevOpsTesting
-
-      - attach_workspace:
-          at: ~/RNDevOpsTesting
-
-      - restore_cache:
-          key:  node-v1-{{ checksum "package.json" }}-{{ checksum "yarn.lock" }}
-          
+      - checkout
       - run: yarn test
+
   build-android:
-    working_directory: ~/RNDevOpsTesting
     docker:
       - image: ralalibeta/android_ci:latest
     steps:
-      - checkout:
-          path: ~/RNDevOpsTesting
-
-      - attach_workspace:
-          at: ~/RNDevOpsTesting
-
-      - restore_cache:
-          key: node-v1-{{ checksum "package.json" }}-{{ checksum "yarn.lock" }}
-
+      - checkout
       - run:
           name: build android apk
           command: |
             cd ~/RNDevOpsTesting/android
-            if [ "${CIRCLE_BRANCH}" == "staging" ]; then
-               ./gradlew assembleStaging
+            if [ "${CIRCLE_BRANCH}" == "development" ]; then
+               ENVFILE=.env.dev ./gradlew assembleDebug
+            elif [ "${CIRCLE_BRANCH}" == "staging" ]; then
+               ENVFILE=.env.staging ./gradlew assembleStaging
             elif [ "${CIRCLE_BRANCH}" == "release" ]; then
-               ./gradlew assembleRelease
+               ENVFILE=.env.release ./gradlew assembleRelease
             fi
 
-      - store_artifacts:
-          path: ~/RNDevOpsTesting/android/app/build/outputs/apk
+    store-apk:
+      docker:
+        - image: ralalibeta/android_ci:latest
+      steps:
+        - checkout
+        - store_artifacts:
+            path: ~/RNDevOpsTesting/android/app/build/outputs/apk
 
 workflows:
   version: 2
-  build-and-test:
+  android-build-test-store:
     jobs:
       - install-node-modules
       - jest-test:
@@ -75,3 +59,13 @@ workflows:
       - build-android:
           requires:
             - jest-test
+      - store-apk:
+          requires:
+            - build-android
+          filters:
+            branches:
+              only:
+                - staging
+                - master
+
+
