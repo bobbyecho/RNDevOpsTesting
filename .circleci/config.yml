@@ -64,12 +64,13 @@ jobs:
             # elif [[ "${CIRCLE_BRANCH}" == *"release_"* ]]; then
             #   ./gradlew assembleRelease
             fi
+
+      - store_artifacts:
+          path: ~/mobile-radar/app/build
 workflows:
   version: 2
   build-and-test:
     jobs:
-      - install-node-modules
-      - jest-test
       - build-android:
           requires:
             - install-node-modules
