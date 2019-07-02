@@ -3,7 +3,7 @@ jobs:
   install-node-modules:
     working_directory: ~/RNDevOpsTesting
     docker:
-      - image: circleci/android:api-28-node8-alpha
+      - image: circleci/android:latest
     steps:
       - checkout:
           path: ~/RNDevOpsTesting
@@ -25,7 +25,7 @@ jobs:
   jest-test:
     working_directory: ~/RNDevOpsTesting
     docker:
-      - image: circleci/android:api-28-node8-alpha
+      - image: circleci/android:latest
     steps:
       - checkout:
           path: ~/RNDevOpsTesting
@@ -40,7 +40,7 @@ jobs:
   build-android:
     working_directory: ~/RNDevOpsTesting
     docker:
-      - image: circleci/android:api-28-node8-alpha
+      - image: circleci/android:latest
     steps:
       - checkout:
           path: ~/RNDevOpsTesting
