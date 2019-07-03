@@ -8,7 +8,7 @@ jobs:
       - checkout
       - restore_cache:
           key: node-v1-{{ checksum "package.json" }}-{{ checksum "yarn.lock" }}
-      - run: yarn  --frozen-lockfile
+      - run: yarn --frozen-lockfile
       - save_cache:
           paths:
             - node_modules
@@ -21,8 +21,16 @@ jobs:
       - image: ralalibeta/android_ci:latest
     steps:
       - checkout
+      - restore_cache:
+          key: node-v1-{{ checksum "package.json" }}-{{ checksum "yarn.lock" }}
       - run: yarn test
-
+      - save_cache:
+          paths:
+            - node_modules
+            - ~/.yarn
+            - ~/.cache/yarn
+          key: node-v1-{{ checksum "package.json" }}-{{ checksum "yarn.lock" }}
+          
   build-android:
     docker:
       - image: ralalibeta/android_ci:latest
