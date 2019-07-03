@@ -33,11 +33,11 @@ jobs:
           command: |
             cd ~/RNDevOpsTesting/android
             if [ "${CIRCLE_BRANCH}" == "development" ]; then
-               ENVFILE=.env.dev ./gradlew assembleDebug
+               bundle exec fastlane android build variant:dev
             elif [ "${CIRCLE_BRANCH}" == "staging" ]; then
-               ENVFILE=.env.staging ./gradlew assembleStaging
+               bundle exec fastlane android build variant:staging
             elif [ "${CIRCLE_BRANCH}" == "release" ]; then
-               ENVFILE=.env.release ./gradlew assembleRelease
+               bundle exec fastlane android build variant:release
             fi
 
     store-apk:
@@ -47,6 +47,13 @@ jobs:
         - checkout
         - store_artifacts:
             path: ~/RNDevOpsTesting/android/app/build/outputs/apk
+
+    deploy-alpha-track:
+      docker:
+        - image: ralalibeta/android_ci:latest
+      steps:
+        - checkout
+
 
 workflows:
   version: 2

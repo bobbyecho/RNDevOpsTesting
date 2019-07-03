@@ -1,36 +1,36 @@
+#common
+application_name = "DevOpsTesting"
+
+#android config
+package_name = "com.devopstesting"
+gradle_file = "./android/app/build.gradle"
+
 platform :android do
-  desc "Submit a new build to Google Play Console"
-  lane :beta do
-    app_identifier = "com.devopstesting"
-    api_environment = "release"
-    ENV["ENVFILE"]=".env.#{api_environment}"
+  before_all do
+    setup_circle_ci
+  end
 
-    puts "API_HOST: #{ENV['API_HOST']}"
-    puts "IS_PRODUCTION: #{ENV['IS_PRODUCTION']}"
-    puts "ENVFILE: #{ENV['ENVFILE']}"
+  desc "Increase Android Version By Options"
+  lane :increase_version do |options|
+    type = options[:type]
+    command = "cd ../android && ./gradlew bumpVersion#{type}"
+    sh(command)
+  end
 
-    gradle_file = "./android/app/build.gradle"
-    
-    android_set_version_name(
-      version_name: "1.0.0",
-      gradle_file: gradle_file
-    )
+  desc "Build android"
+  lane :build do |options|
+    variant = options[:variant]
+    command = "cd ../android && "
 
-    android_set_version_code(
-      gradle_file: gradle_file
-    )
+    if variant === "debug"
+      command += "ENVFILE=.env.dev "
+    elsif variant === "staging"
+      command += "ENVFILE=.env.staging "
+    elsif variant === "release"
+      command += "ENVFILE=.env.release "
+    end
 
-    gradle(
-      project_dir: './android',
-      task: 'assemble',
-      build_type: 'release'
-    )
-
-    supply(
-      json_key: 'google_play_console_key',
-      track: 'beta',
-      apk: './android/app/build/outputs/apk/release/app-release.apk',
-      package_name: app_identifier
-    )
+    command += "./gradlew assemble#{variant}"
+    sh(command)
   end
 end

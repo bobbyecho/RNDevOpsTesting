@@ -16,11 +16,16 @@ or alternatively using `brew cask install fastlane`
 
 # Available Actions
 ## Android
-### android beta
+### android increase_version
 ```
-fastlane android beta
+fastlane android increase_version
 ```
-Submit a new build to Google Play Console
+Increase Android Version By Options
+### android build
+```
+fastlane android build
+```
+Build android
 
 ----
 

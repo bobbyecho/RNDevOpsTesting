@@ -4,5 +4,15 @@
     
     
     
+      
+      <testcase classname="fastlane.lanes" name="0: setup_circle_ci" time="0.016604">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="1: cd ../android &amp;&amp; ENVFILE=.env.release ./gradlew assemblerelease" time="84.266049">
+        
+      </testcase>
+    
   </testsuite>
 </testsuites>
