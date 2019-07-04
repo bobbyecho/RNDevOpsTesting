@@ -42,6 +42,7 @@ jobs:
     working_directory: ~/RNDevOpsTesting
     docker:
       - image: ralalibeta/android_ci:latest
+    shell: /bin/bash --login -o pipefail
     steps:
       - checkout:
           path: ~/RNDevOpsTesting
@@ -51,7 +52,7 @@ jobs:
           key: node-v1-{{ checksum "package.json" }}-{{ checksum "yarn.lock" }}
       - restore_cache:
           key: 1-gems-{{ checksum "Gemfile.lock" }}
-      - run: bundle check || bundle install --path vendor/bundle
+      - run: bundle install
       - save_cache:
           paths:
             - node_modules
