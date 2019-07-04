@@ -5,12 +5,12 @@
     
     
       
-      <testcase classname="fastlane.lanes" name="0: setup_circle_ci" time="0.016604">
+      <testcase classname="fastlane.lanes" name="0: setup_circle_ci" time="0.040904">
         
       </testcase>
     
       
-      <testcase classname="fastlane.lanes" name="1: cd ../android &amp;&amp; ENVFILE=.env.release ./gradlew assemblerelease" time="84.266049">
+      <testcase classname="fastlane.lanes" name="1: cd ../android &amp;&amp; ENVFILE=.env.staging ./gradlew assemblestaging" time="38.835412">
         
       </testcase>
     

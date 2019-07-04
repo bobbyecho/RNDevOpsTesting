@@ -47,20 +47,28 @@ jobs:
           path: ~/RNDevOpsTesting
       - attach_workspace:
           at: ~/RNDevOpsTesting
+      - restore_cache:
+          key: node-v1-{{ checksum "package.json" }}-{{ checksum "yarn.lock" }}
       - run:
           name: build android apk
           command: |
             cd ~/RNDevOpsTesting/android
             if [ "${CIRCLE_BRANCH}" == "development" ]; then
-               bundle exec fastlane android build variant:dev
+               bundle exec fastlane android build variant:debug
             elif [ "${CIRCLE_BRANCH}" == "staging" ]; then
                bundle exec fastlane android build variant:staging
             elif [ "${CIRCLE_BRANCH}" == "release" ]; then
                bundle exec fastlane android build variant:release
             fi
+      - save_cache:
+          paths:
+            - node_modules
+            - ~/.yarn
+            - ~/.cache/yarn
+          key: node-v1-{{ checksum "package.json" }}-{{ checksum "yarn.lock" }}
 
   store-apk:
-    working_directory: ~/RNDevOpsTesting/android
+    working_directory: ~/RNDevOpsTesting
     docker:
       - image: ralalibeta/android_ci:latest
     steps:
@@ -68,6 +76,8 @@ jobs:
           path: ~/RNDevOpsTesting
       - attach_workspace:
           at: ~/RNDevOpsTesting
+      - restore_cache:
+          key: node-v1-{{ checksum "package.json" }}-{{ checksum "yarn.lock" }}
       - store_artifacts:
           path: ~/RNDevOpsTesting/android/app/build/outputs/apk
 
