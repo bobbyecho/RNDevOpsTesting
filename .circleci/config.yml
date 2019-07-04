@@ -98,9 +98,20 @@ workflows:
       - build-android:
           requires:
             - jest-test
+      - hold:
+          type: approval
+          requires:
+            - install-node-modules
+            - jest-test
+            - build-android
+          filters:
+            branches:
+              only:
+                - staging
+                - master
       - store-apk:
           requires:
-            - build-android
+            - hold
           filters:
             branches:
               only:
