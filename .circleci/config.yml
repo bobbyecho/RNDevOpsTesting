@@ -1,9 +1,13 @@
 version: 2
+defaults: &defaults
+  docker:
+    - image: ralalibeta/android_ci:latest
+  environment:
+    JVM_OPTS: -Xmx3200m
 jobs:
   install-node-modules:
     working_directory: ~/RNDevOpsTesting
-    docker:
-      - image: ralalibeta/android_ci:latest
+    <<: *defaults
     steps:
       - checkout:
           path: ~/RNDevOpsTesting
@@ -21,8 +25,7 @@ jobs:
 
   jest-test:
     working_directory: ~/RNDevOpsTesting
-    docker:
-      - image: ralalibeta/android_ci:latest
+    <<: *defaults
     steps:
       - checkout:
           path: ~/RNDevOpsTesting
@@ -40,8 +43,7 @@ jobs:
           
   build-android:
     working_directory: ~/RNDevOpsTesting
-    docker:
-      - image: ralalibeta/android_ci:latest
+    <<: *defaults
     steps:
       - checkout:
           path: ~/RNDevOpsTesting
@@ -52,6 +54,16 @@ jobs:
       - restore_cache:
           key: 1-gems-{{ checksum "Gemfile.lock" }}
       - run: bundle install
+      - run:
+          name: build android apk
+          command: |
+            if [ "${CIRCLE_BRANCH}" == "development" ]; then
+               bundle exec fastlane android build variant:debug
+            elif [ "${CIRCLE_BRANCH}" == "staging" ]; then
+               bundle exec fastlane android build variant:staging
+            elif [ "${CIRCLE_BRANCH}" == "release" ]; then
+               bundle exec fastlane android build variant:release
+            fi
       - save_cache:
           paths:
             - node_modules
@@ -62,22 +74,10 @@ jobs:
           paths:
             - vendor/bundle
           key: 1-gems-{{ checksum "Gemfile.lock" }}
-      - run:
-          name: build android apk
-          command: |
-            cd ~/RNDevOpsTesting/android
-            if [ "${CIRCLE_BRANCH}" == "development" ]; then
-               bundle exec fastlane android build variant:debug
-            elif [ "${CIRCLE_BRANCH}" == "staging" ]; then
-               bundle exec fastlane android build variant:staging
-            elif [ "${CIRCLE_BRANCH}" == "release" ]; then
-               bundle exec fastlane android build variant:release
-            fi
 
   store-apk:
     working_directory: ~/RNDevOpsTesting
-    docker:
-      - image: ralalibeta/android_ci:latest
+    <<: *defaults
     steps:
       - checkout:
           path: ~/RNDevOpsTesting
@@ -107,20 +107,20 @@ workflows:
             - jest-test
       - hold:
           type: approval
+          filters:
+            branches:
+              only:
+                - staging
+                - master
           requires:
             - install-node-modules
             - jest-test
             - build-android
-          filters:
+      - store-apk:
+        filters:
             branches:
               only:
                 - staging
                 - master
-      - store-apk:
           requires:
             - hold
-          filters:
-            branches:
-              only:
-                - staging
-                - master
