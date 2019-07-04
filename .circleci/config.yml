@@ -28,7 +28,15 @@ jobs:
           path: ~/RNDevOpsTesting
       - attach_workspace:
           at: ~/RNDevOpsTesting
+      - restore_cache:
+          key: node-v1-{{ checksum "package.json" }}-{{ checksum "yarn.lock" }}
       - run: yarn test
+      - save_cache:
+          paths:
+            - node_modules
+            - ~/.yarn
+            - ~/.cache/yarn
+          key: node-v1-{{ checksum "package.json" }}-{{ checksum "yarn.lock" }}
           
   build-android:
     working_directory: ~/RNDevOpsTesting/android
