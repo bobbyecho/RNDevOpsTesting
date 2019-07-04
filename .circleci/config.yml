@@ -1,12 +1,13 @@
 version: 2
 defaults: &defaults
+  working_directory: ~/RNDevOpsTesting
   docker:
     - image: ralalibeta/android_ci:latest
   environment:
-    JVM_OPTS: -Xmx3200m
+    _JAVA_OPTIONS: "-Xmx1500m"
+
 jobs:
   install-node-modules:
-    working_directory: ~/RNDevOpsTesting
     <<: *defaults
     steps:
       - checkout:
@@ -24,7 +25,6 @@ jobs:
           key: node-v1-{{ checksum "package.json" }}-{{ checksum "yarn.lock" }}
 
   jest-test:
-    working_directory: ~/RNDevOpsTesting
     <<: *defaults
     steps:
       - checkout:
@@ -42,7 +42,6 @@ jobs:
           key: node-v1-{{ checksum "package.json" }}-{{ checksum "yarn.lock" }}
           
   build-android:
-    working_directory: ~/RNDevOpsTesting
     <<: *defaults
     steps:
       - checkout:
@@ -76,7 +75,6 @@ jobs:
           key: 1-gems-{{ checksum "Gemfile.lock" }}
 
   store-apk:
-    working_directory: ~/RNDevOpsTesting
     <<: *defaults
     steps:
       - checkout:
