@@ -6,9 +6,9 @@ package_name = "com.devopstesting"
 gradle_file = "./android/app/build.gradle"
 
 platform :android do
-  before_all do
-    setup_circle_ci
-  end
+  #before_all do
+    #setup_circle_ci
+  #end
 
   desc "Increase Android Version By Options"
   lane :increase_version do |options|
