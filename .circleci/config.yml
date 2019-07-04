@@ -49,6 +49,7 @@ jobs:
           at: ~/RNDevOpsTesting
       - restore_cache:
           key: node-v1-{{ checksum "package.json" }}-{{ checksum "yarn.lock" }}
+      - run: bundle install
       - run:
           name: build android apk
           command: |
