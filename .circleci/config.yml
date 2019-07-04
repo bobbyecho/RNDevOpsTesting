@@ -39,7 +39,7 @@ jobs:
           key: node-v1-{{ checksum "package.json" }}-{{ checksum "yarn.lock" }}
           
   build-android:
-    working_directory: ~/RNDevOpsTesting/android
+    working_directory: ~/RNDevOpsTesting
     docker:
       - image: ralalibeta/android_ci:latest
     steps:
