@@ -5,7 +5,8 @@ jobs:
     docker:
       - image: ralalibeta/android_ci:latest
     steps:
-      - checkout
+      - checkout:
+          path: ~/RNDevOpsTesting
       - restore_cache:
           key: node-v1-{{ checksum "package.json" }}-{{ checksum "yarn.lock" }}
       - run: yarn --frozen-lockfile
@@ -17,25 +18,21 @@ jobs:
           key: node-v1-{{ checksum "package.json" }}-{{ checksum "yarn.lock" }}
 
   jest-test:
+    working_directory: ~/RNDevOpsTesting
     docker:
       - image: ralalibeta/android_ci:latest
     steps:
-      - checkout
-      - restore_cache:
-          key: node-v1-{{ checksum "package.json" }}-{{ checksum "yarn.lock" }}
+      - checkout:
+          path: ~/RNDevOpsTesting
       - run: yarn test
-      - save_cache:
-          paths:
-            - node_modules
-            - ~/.yarn
-            - ~/.cache/yarn
-          key: node-v1-{{ checksum "package.json" }}-{{ checksum "yarn.lock" }}
           
   build-android:
+    working_directory: ~/RNDevOpsTesting/android
     docker:
       - image: ralalibeta/android_ci:latest
     steps:
-      - checkout
+      - checkout:
+          path: ~/RNDevOpsTesting
       - run:
           name: build android apk
           command: |
@@ -48,20 +45,19 @@ jobs:
                bundle exec fastlane android build variant:release
             fi
 
-    store-apk:
-      docker:
-        - image: ralalibeta/android_ci:latest
-      steps:
-        - checkout
-        - store_artifacts:
-            path: ~/RNDevOpsTesting/android/app/build/outputs/apk
+  store-apk:
+    docker:
+      - image: ralalibeta/android_ci:latest
+    steps:
+      - checkout
+      - store_artifacts:
+          path: ~/RNDevOpsTesting/android/app/build/outputs/apk
 
-    deploy-alpha-track:
-      docker:
-        - image: ralalibeta/android_ci:latest
-      steps:
-        - checkout
-
+  deploy-alpha-track:
+    docker:
+      - image: ralalibeta/android_ci:latest
+    steps:
+      - checkout
 
 workflows:
   version: 2
