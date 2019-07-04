@@ -42,7 +42,6 @@ jobs:
     working_directory: ~/RNDevOpsTesting
     docker:
       - image: ralalibeta/android_ci:latest
-    shell: /bin/bash --login -o pipefail
     steps:
       - checkout:
           path: ~/RNDevOpsTesting
