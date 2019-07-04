@@ -87,8 +87,7 @@ jobs:
           path: ~/RNDevOpsTesting/android/app/build/outputs/apk
 
   deploy-alpha-track:
-    docker:
-      - image: ralalibeta/android_ci:latest
+    <<: *defaults
     steps:
       - checkout
 
