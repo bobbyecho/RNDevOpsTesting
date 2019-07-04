@@ -3,9 +3,7 @@ defaults: &defaults
   working_directory: ~/RNDevOpsTesting
   docker:
     - image: ralalibeta/android_ci:latest
-  environment:
-    _JAVA_OPTIONS: "-Xmx1500m"
-
+    
 jobs:
   install-node-modules:
     <<: *defaults
