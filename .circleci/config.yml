@@ -7,6 +7,8 @@ jobs:
     steps:
       - checkout:
           path: ~/RNDevOpsTesting
+      - attach_workspace:
+          at: ~/RNDevOpsTesting
       - restore_cache:
           key: node-v1-{{ checksum "package.json" }}-{{ checksum "yarn.lock" }}
       - run: yarn --frozen-lockfile
@@ -24,6 +26,8 @@ jobs:
     steps:
       - checkout:
           path: ~/RNDevOpsTesting
+      - attach_workspace:
+          at: ~/RNDevOpsTesting
       - run: yarn test
           
   build-android:
@@ -33,6 +37,8 @@ jobs:
     steps:
       - checkout:
           path: ~/RNDevOpsTesting
+      - attach_workspace:
+          at: ~/RNDevOpsTesting
       - run:
           name: build android apk
           command: |
@@ -46,10 +52,14 @@ jobs:
             fi
 
   store-apk:
+    working_directory: ~/RNDevOpsTesting/android
     docker:
       - image: ralalibeta/android_ci:latest
     steps:
-      - checkout
+      - checkout:
+          path: ~/RNDevOpsTesting
+      - attach_workspace:
+          at: ~/RNDevOpsTesting
       - store_artifacts:
           path: ~/RNDevOpsTesting/android/app/build/outputs/apk
 
