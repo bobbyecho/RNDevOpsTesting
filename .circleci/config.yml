@@ -3,7 +3,7 @@ defaults: &defaults
   working_directory: ~/RNDevOpsTesting
   docker:
     - image: ralalibeta/android_ci:latest
-    
+
 jobs:
   install-node-modules:
     <<: *defaults
@@ -84,10 +84,27 @@ jobs:
       - store_artifacts:
           path: ~/RNDevOpsTesting/android/app/build/outputs/apk
 
-  deploy-alpha-track:
+  deploy-beta-track:
     <<: *defaults
     steps:
-      - checkout
+      - checkout:
+          path: ~/RNDevOpsTesting
+      - attach_workspace:
+          at: ~/RNDevOpsTesting
+      - restore_cache:
+          key: node-v1-{{ checksum "package.json" }}-{{ checksum "yarn.lock" }}
+      - run: bundle exec fastlane android beta
+      - save_cache:
+          paths:
+            - node_modules
+            - ~/.yarn
+            - ~/.cache/yarn
+          key: node-v1-{{ checksum "package.json" }}-{{ checksum "yarn.lock" }}
+      - save_cache:
+          paths:
+            - vendor/bundle
+          key: 1-gems-{{ checksum "Gemfile.lock" }}
+
 
 workflows:
   version: 2
@@ -100,22 +117,19 @@ workflows:
       - build-android:
           requires:
             - jest-test
-      - hold:
-          type: approval
-          filters:
-            branches:
-              only:
-                - staging
-                - master
-          requires:
-            - install-node-modules
-            - jest-test
-            - build-android
       - store-apk:
           filters:
             branches:
               only:
-                - staging
-                - master
+                - release
           requires:
-            - hold
+            - install-node-modules
+            - jest-test
+            - build-android
+      - deploy-beta-track:
+          filters:
+            branches:
+              only:
+                - release
+          requires:
+            - store-apk

@@ -33,4 +33,14 @@ platform :android do
     command += "./gradlew assemble#{variant}"
     sh(command)
   end
+
+  desc "Deploy to BETA"
+  lane :beta do
+    #command = " cd ../android && ENVFILE=.env.release ./gradlew assembleRelease"
+    #sh(command)
+    supply(
+      track: 'beta',
+      apk: './android/app/build/outputs/apk/release/app-release.apk'
+    )
+  end
 end

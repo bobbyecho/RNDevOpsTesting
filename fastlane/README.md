@@ -26,6 +26,11 @@ Increase Android Version By Options
 fastlane android build
 ```
 Build android
+### android beta
+```
+fastlane android beta
+```
+Deploy to BETA
 
 ----
 
