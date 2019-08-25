@@ -110,7 +110,11 @@ workflows:
   version: 2
   android-build-test-store:
     jobs:
-      - install-node-modules
+      - install-node-modules:
+          filters:
+            branches:
+              only:
+                - development
       - jest-test:
           requires:
             - install-node-modules
