@@ -25,7 +25,7 @@ class App extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <Text style={styles.welcome}>Welcome to React Native asdas</Text>
+        <Text style={styles.welcome}>Welcom to React Native asdas</Text>
         <Text style={styles.instructions}>To get stated, edit App.js</Text>
         <Text style={styles.instructions}>{instructions}</Text>
       </View>
